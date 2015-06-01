@@ -3,8 +3,10 @@ compiler:
   - gcc
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install autotools-dev automake autoconf libtool libdbus-1-dev libcap-dev libblkid-dev libmount-dev libpam-dev libcryptsetup-dev libaudit-dev libacl1-dev libattr1-dev libselinux-dev liblzma-dev libgcrypt-dev libqrencode-dev libmicrohttpd-dev gperf python2.7-dev
-script: ./autogen.sh && ./configure && make V=1 && sudo ./systemd-machine-id-setup && make check && make distcheck
+ - sudo apt-get install autotools-dev automake autoconf libtool libdbus-1-dev libcap-dev libblkid-dev libmount-dev libpam-dev libcryptsetup-dev libaudit-dev libacl1-dev libattr1-dev libselinux-dev liblzma-dev libgcrypt-dev libqrencode-dev libmicrohttpd-dev gtk-doc-tools gperf python2.7-dev
+# outdated coreutils causes `configure: error: *** ln doesn't support --relative ***`
+ - wget http://ftp.gnu.org/gnu/coreutils/coreutils-8.23.tar.xz && tar xf coreutils-8.23.tar.xz && cd coreutils-8.23 && ./configure && make -j24 && sudo make install && cd ..
+script: ./autogen.sh && ./configure --enable-gtk-doc --enable-gtk-doc-pdf && make V=1 && sudo ./systemd-machine-id-setup && make check && make distcheck
 after_failure: cat test-suite.log
 notifications:
   irc:
